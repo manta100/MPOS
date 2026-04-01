@@ -1,0 +1,466 @@
+================================================================================
+                    MPOS - IMPLEMENTATION PLAN
+                    Modern Point of Sale System
+================================================================================
+
+PROJECT OVERVIEW
+================================================================================
+MPOS (Modern Point of Sale) is a full-stack POS system inspired by Loyverse POS,
+designed for retail and restaurant businesses.
+
+TECHNOLOGY STACK
+================================================================================
+- Frontend: React 18 + Vite + TypeScript + Tailwind CSS + Zustand
+- Backend: Node.js + Express + TypeScript
+- Database: MySQL 8.0+ with Prisma ORM
+- Real-time: Socket.io
+- Auth: JWT with refresh tokens
+- PWA: vite-plugin-pwa
+
+================================================================================
+                    PHASE-BY-PHASE IMPLEMENTATION
+================================================================================
+
+PHASE 1: FOUNDATION + AUTH ✅ DONE
+--------------------------------------------------------------------------------
+- Database schema (22 tables in Prisma)
+- JWT Authentication with refresh tokens
+- User roles (Admin, Manager, Cashier)
+- Login page UI
+- Auth middleware
+- Store management
+
+PHASE 2: POS SCREEN ✅ DONE
+--------------------------------------------------------------------------------
+- Grid layout for items with images
+- Category navigation with filters
+- Shopping cart with quantity management
+- Real-time search + barcode scanning (keyboard wedge)
+- Dining options (Dine-in/Takeout/Delivery)
+- Customer assignment modal
+- Payment modal with multiple methods
+
+PHASE 3: ITEMS + MODIFIERS ✅ DONE
+--------------------------------------------------------------------------------
+- Items CRUD (Create, Read, Update, Delete)
+- Categories CRUD
+- Item variants (size, color, style) with modal selection
+- Item modifiers (toppings, customizations) with modal selection
+- SKU/Barcode support
+- Image uploads
+- Badge indicators for items with modifiers/variants
+
+PHASE 4: TICKETS + PAYMENTS ✅ DONE
+--------------------------------------------------------------------------------
+- Open ticket management (create, update, delete)
+- Hold and recall tickets
+- Split tickets
+- Merge tickets
+- Multiple payment methods support
+- Change calculation
+- Ticket status tracking (OPEN, HOLD, CLOSED, VOID)
+
+PHASE 5: RECEIPTS ✅ DONE
+--------------------------------------------------------------------------------
+- Receipt generation service (thermal receipt format)
+- Print receipt API endpoint
+- Email receipt API endpoint
+- Receipt database model
+- Receipt customization
+
+PHASE 6: INVENTORY ✅ DONE
+--------------------------------------------------------------------------------
+- Stock tracking API
+- Inventory adjustments (purchase, damage, return, manual)
+- Low stock alerts
+- Stock level display
+- Inventory history logs
+
+PHASE 7: CUSTOMERS + LOYALTY ✅ DONE
+--------------------------------------------------------------------------------
+- Customer CRUD
+- Loyalty points system
+- Customer search on POS
+- Purchase history tracking
+- Visit count
+- Customer tags
+
+PHASE 8: SHIFTS + TIMECLOCK ✅ DONE
+--------------------------------------------------------------------------------
+- Shift management API (open/close)
+- Time clock (clock in/out)
+- Cash events (payin/payout, cash in/out)
+- Cash drawer management
+
+PHASE 9: KITCHEN DISPLAY ✅ DONE
+--------------------------------------------------------------------------------
+- Real-time orders via Socket.io
+- Order status updates (pending, in progress, ready, served)
+- Kitchen stations support
+- Auto-refresh polling (5 second interval)
+- Priority orders
+
+PHASE 10: REPORTS ✅ DONE
+--------------------------------------------------------------------------------
+- Sales summary API
+- Sales by item
+- Sales by category
+- Sales by payment type
+- Sales by employee
+- Hourly sales
+- CSV export functionality
+
+PHASE 11: SETTINGS ✅ DONE
+--------------------------------------------------------------------------------
+- Store configuration (name, address, phone, currency)
+- Tax rates management
+- Receipt customization (header/footer, logo, barcode)
+- Payment methods setup
+- Auto-logout settings
+- Printer configuration
+
+PHASE 12: POLISH ✅ DONE
+--------------------------------------------------------------------------------
+- Loading states throughout the app
+- Error handling with toast notifications
+- Dark mode support
+
+PHASE 13: PWA ✅ DONE
+--------------------------------------------------------------------------------
+- PWA manifest for installable app
+- Service worker for offline support
+- Caching for fonts and static assets
+- vite-plugin-pwa integration
+
+================================================================================
+                    HOW TO RUN THE PROJECT
+================================================================================
+
+PREREQUISITES
+================================================================================
+- Node.js 18 or higher
+- MySQL 8.0 or higher
+- npm or yarn
+
+OPTION 1: LOCAL DEVELOPMENT (RECOMMENDED)
+================================================================================
+
+Step 1: Clone the repository
+-----------------------------
+git clone https://github.com/manta100/MPOS
+cd MPOS
+
+Step 2: Setup Backend
+---------------------
+cd backend
+npm install
+cp .env.example .env
+
+# Edit .env with your MySQL credentials:
+# DATABASE_URL="mysql://user:password@localhost:3306/mpos"
+# JWT_SECRET="your-secret-key"
+# JWT_REFRESH_SECRET="your-refresh-secret"
+# PORT=3001
+# FRONTEND_URL="http://localhost:5173"
+
+# Generate Prisma client
+npx prisma generate
+
+# Push schema to database
+npx prisma db push
+
+# Start backend server
+npm run dev
+# Backend runs on http://localhost:3001
+
+Step 3: Setup Frontend (new terminal)
+-------------------------------------
+cd ../frontend
+npm install
+
+# Start frontend
+npm run dev
+# Frontend runs on http://localhost:5173
+
+
+OPTION 2: DOCKER
+================================================================================
+
+cd MPOS
+
+# Start all services (MySQL, Backend, Frontend)
+docker-compose up -d
+
+# Services:
+# - Frontend: http://localhost:5173
+# - Backend: http://localhost:3001
+# - MySQL: localhost:3306 (root/root)
+
+
+================================================================================
+                    DEMO CREDENTIALS
+================================================================================
+
+| Role     | Email               | Password |
+|----------|---------------------|----------|
+| Admin    | admin@mpos.com      | password |
+| Manager  | manager@mpos.com    | password |
+| Cashier  | cashier@mpos.com    | password |
+
+
+================================================================================
+                    API ENDPOINTS SUMMARY
+================================================================================
+
+AUTHENTICATION
+--------------
+POST   /api/auth/login          - Login with email/password
+POST   /api/auth/logout         - Logout
+GET    /api/auth/me             - Get current user
+POST   /api/auth/pin-login      - PIN login
+
+USERS
+-----
+GET    /api/users               - List users
+POST   /api/users               - Create user
+GET    /api/users/:id           - Get user
+PUT    /api/users/:id           - Update user
+DELETE /api/users/:id           - Delete user
+PUT    /api/users/:id/role      - Update user role
+
+CATEGORIES
+----------
+GET    /api/categories          - List categories
+POST   /api/categories          - Create category
+PUT    /api/categories/:id      - Update category
+DELETE /api/categories/:id     - Delete category
+
+ITEMS
+-----
+GET    /api/items               - List items (with search, pagination)
+POST   /api/items               - Create item
+GET    /api/items/:id           - Get item
+PUT    /api/items/:id           - Update item
+DELETE /api/items/:id          - Delete item
+GET    /api/items/barcode/:code - Get item by barcode
+
+TICKETS
+-------
+GET    /api/tickets             - List tickets
+POST   /api/tickets             - Create ticket
+GET    /api/tickets/:id         - Get ticket
+PUT    /api/tickets/:id         - Update ticket
+POST   /api/tickets/:id/items   - Add item to ticket
+PUT    /api/tickets/:id/pay     - Pay/close ticket
+POST   /api/tickets/:id/hold    - Hold ticket
+POST   /api/tickets/:id/reopen  - Reopen ticket
+POST   /api/tickets/:id/split   - Split ticket
+POST   /api/tickets/:id/merge   - Merge tickets
+DELETE /api/tickets/:id        - Void ticket
+
+CUSTOMERS
+---------
+GET    /api/customers          - List customers
+POST   /api/customers          - Create customer
+GET    /api/customers/:id      - Get customer
+PUT    /api/customers/:id      - Update customer
+DELETE /api/customers/:id      - Delete customer
+GET    /api/customers/:id/history - Get purchase history
+
+PAYMENTS
+--------
+GET    /api/payments           - List payment methods
+POST   /api/payments           - Create payment method
+PUT    /api/payments/:id       - Update payment method
+DELETE /api/payments/:id      - Delete payment method
+
+REPORTS
+-------
+GET    /api/reports/sales      - Sales summary
+GET    /api/reports/sales-by-item     - Sales by item
+GET    /api/reports/sales-by-category - Sales by category
+GET    /api/reports/sales-by-payment  - Sales by payment type
+GET    /api/reports/sales-by-employee - Sales by employee
+GET    /api/reports/hourly-sales      - Hourly sales
+GET    /api/reports/export/:type      - Export as CSV
+
+INVENTORY
+---------
+GET    /api/inventory          - List inventory
+GET    /api/inventory/low-stock       - Low stock items
+GET    /api/inventory/history        - Inventory history
+POST   /api/inventory/:itemId/adjust - Adjust stock
+
+KITCHEN
+-------
+GET    /api/kitchen/orders           - List kitchen orders
+GET    /api/kitchen/orders/new      - New orders since timestamp
+PUT    /api/kitchen/:id/status       - Update order status
+
+SHIFTS
+------
+GET    /api/shifts              - List shifts
+POST   /api/shifts              - Create shift
+PUT    /api/shifts/:id/close    - Close shift
+
+SETTINGS
+--------
+GET    /api/settings/store      - Get store settings
+PUT    /api/settings/store      - Update store settings
+GET    /api/settings/taxes      - Get tax settings
+PUT    /api/settings/taxes      - Update tax settings
+
+RECEIPTS
+--------
+GET    /api/receipts/:ticketId - Get receipt text
+POST   /api/receipts/print      - Print receipt
+POST   /api/receipts/email     - Email receipt
+
+
+================================================================================
+                    PROJECT STRUCTURE
+================================================================================
+
+MPOS/
+├── backend/                 # Node.js API Server
+│   ├── src/
+│   │   ├── controllers/    # Route handlers (auth, store)
+│   │   ├── middleware/     # Auth & error handling
+│   │   ├── routes/         # 15 route files (API endpoints)
+│   │   ├── services/       # Business logic
+│   │   ├── socket/        # Real-time Socket.io handlers
+│   │   └── server.ts      # Express server entry
+│   ├── prisma/
+│   │   └── schema.prisma  # Database schema (22 tables)
+│   └── package.json
+│
+├── frontend/               # React SPA
+│   ├── src/
+│   │   ├── pages/         # 13 page components
+│   │   ├── components/    # Layout components
+│   │   ├── services/      # API client (axios)
+│   │   ├── stores/        # Zustand state management
+│   │   └── types/         # TypeScript definitions
+│   ├── public/
+│   │   ├── manifest.json  # PWA manifest
+│   │   └── sw.ts          # Service worker
+│   └── package.json
+│
+├── prisma/
+│   └── schema.prisma       # Database schema
+│
+├── docker/
+│   └── docker-compose.yml  # Docker setup
+│
+└── SPEC.md                 # Detailed specification
+
+
+================================================================================
+                    KEY FEATURES
+================================================================================
+
+✓ Touch-friendly POS interface
+✓ Barcode scanner support (keyboard wedge)
+✓ Real-time kitchen display (Socket.io)
+✓ Customer loyalty points
+✓ Hold/recall tickets
+✓ Split/merge tickets
+✓ Multiple payment methods
+✓ Tax calculation
+✓ Discount application
+✓ PWA offline support
+✓ CSV report exports
+✓ Inventory tracking
+✓ Shift/timeclock management
+✓ Role-based access control (Admin/Manager/Cashier)
+
+
+================================================================================
+                    DATABASE SCHEMA (22 TABLES)
+================================================================================
+
+AUTH & STORES
+-------------
+stores, users, sessions, user_favorite_items
+
+ITEMS & MODIFIERS
+-----------------
+categories, items, item_variants
+modifier_groups, modifiers, item_modifier_groups
+combo_meals, combo_items
+
+TICKETS & PAYMENTS
+------------------
+tickets, ticket_items, ticket_item_modifiers
+ticket_payments, payments, refunds
+discounts, taxes, item_taxes
+
+CUSTOMERS
+---------
+customers, customer_tags, loyalty_transactions
+
+INVENTORY
+---------
+inventory_logs, purchase_orders, purchase_order_items
+vendors, transfers, transfer_items
+
+OPERATIONS
+----------
+shifts, cash_events, time_clocks
+
+KITCHEN
+-------
+kitchen_orders, kitchen_order_items, tables, kitchen_stations
+
+SETTINGS
+--------
+settings, receipt_templates, receipts
+
+
+================================================================================
+                    ENVIRONMENT VARIABLES
+================================================================================
+
+Backend (.env):
+--------------
+DATABASE_URL=mysql://user:password@localhost:3306/mpos
+JWT_SECRET=your-secret-key-min-32-chars-long
+JWT_REFRESH_SECRET=your-refresh-secret-min-32-chars
+PORT=3001
+FRONTEND_URL=http://localhost:5173
+
+
+================================================================================
+                    BUILD COMMANDS
+================================================================================
+
+Backend:
+--------
+npm run dev          # Development mode
+npm run build        # Production build
+npx prisma generate  # Generate Prisma client
+npx prisma db push   # Push schema to database
+
+Frontend:
+---------
+npm run dev          # Development mode
+npm run build        # Production build
+npm run lint         # Run ESLint
+npm run typecheck   # TypeScript check
+
+
+================================================================================
+                    NOTES
+================================================================================
+
+- The project uses TypeScript throughout for type safety
+- Frontend uses Zustand for state management (cart, auth)
+- Backend uses Prisma ORM for database operations
+- Socket.io handles real-time kitchen display updates
+- PWA allows offline installation as a native-like app
+- All monetary values are stored as Decimal in database
+
+
+================================================================================
+                    END OF IMPLEMENTATION PLAN
+================================================================================
