@@ -1,0 +1,37 @@
+{
+  "name": "MPOS - Modern Point of Sale",
+  "short_name": "MPOS",
+  "description": "A full-featured POS system for retail and restaurant businesses",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1F2937",
+  "theme_color": "#3B82F6",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "productivity"],
+  "shortcuts": [
+    {
+      "name": "POS Screen",
+      "url": "/pos",
+      "description": "Open POS checkout screen"
+    },
+    {
+      "name": "Kitchen",
+      "url": "/kitchen",
+      "description": "Open Kitchen Display"
+    }
+  ]
+}
